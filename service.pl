@@ -41,7 +41,7 @@ use CGI;
 use CGI::Carp qw(warningsToBrowser fatalsToBrowser);
 
 BEGIN {
-	unshift @INC, '/home/vasyl/Завантаження/citrusleaf_client_swig_2.1.34/swig/perl';
+	unshift @INC, '/clover/citrusleaf_client_swig_2.1.34/swig/perl';
 }
 use citrusleaf;
 use perl_citrusleaf;

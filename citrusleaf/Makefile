@@ -1,4 +1,4 @@
-_DEPTH = ..
+C_DEPTH = ..
 DIR_INCLUDE_C =  $(C_DEPTH)/include/
 DIR_INCLUDE_CF =  $(C_DEPTH)/../cf_base/include/
 DIR_OBJECT = ./obj
