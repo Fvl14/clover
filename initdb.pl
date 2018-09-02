@@ -1,4 +1,4 @@
-ystem('su - postgres');
+system('su - postgres');
 system('psql');
 system('create database clover;');
 system('\q');
