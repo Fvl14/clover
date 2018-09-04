@@ -24,11 +24,28 @@ RUN apt-get update && apt-get install -y \
 	cpanminus
 
 RUN mkdir clover \
+	&& cd clover
+
+ADD ./config/nginx/default /etc/nginx/sites-available/default
+ADD ./config/postgresql/clover.sql /clover/clover.sql
+ADD ./config/aerospike/ /clover/
+ADD ./project/Data/service.pl /var/www/html/service.pl
+
+RUN chown  postgres:postgres /clover/clover.sql
+
+USER postgres
+
+RUN service postgresql start \
+	&& createdb clover \
+	&& psql --username=postgres clover < /clover/clover.sql
+
+USER root
+
+RUN chmod a+x /var/www/html/service.pl \
+	&& chmod 0777 var/www/html/service.pl \
+	&& chown  www-data:www-data /var/www/html \
+	&& chown  www-data:www-data /var/www/html/service.pl \
 	&& cd clover \
-	&& git clone https://github.com/Fvl14/clover.git \
-	&& cp /clover/clover/default /etc/nginx/sites-available/default \
-	&& cp /clover/clover/service.pl /usr/share/nginx/html/ \
-	&& chmod a+x /usr/share/nginx/html/service.pl \
 	&& wget -O aerospike.tgz 'https://www.aerospike.com/download/server/latest/artifact/debian9' \
 	&& tar -xvf aerospike.tgz \
 	&& cd aerospike-server-community-4.3.0.7-debian9/ \
@@ -39,18 +56,12 @@ RUN mkdir clover \
 	&& cd citrusleaf_client_swig_2.1.34 \
 	&& make \
 	&& cd swig \
-	&& cp /clover/clover/citrusleaf/Makefile /clover/citrusleaf_client_swig_2.1.34/swig/Makefile \
+	&& cp /clover/citrusleaf/Makefile /clover/citrusleaf_client_swig_2.1.34/swig/Makefile \
 	&& make LANG=perl \
 	&& cd /clover \
 	&& cpan install -f CGI Mojolicious::Lite Mojo::Pg
 
-USER postgres
-
-RUN service postgresql start \
-	&& createdb clover \
-	&& psql --username=postgres clover < /clover/clover/clover.sql
-
 EXPOSE 80 443
 
-CMD ["/etc/init.d/fcgiwrap start && nginx && service postgresql start && /usr/bin/asd --foreground"]
+CMD /etc/init.d/fcgiwrap start; nginx -g "daemon off;"; /usr/bin/asd --foreground
 
