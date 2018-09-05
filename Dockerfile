@@ -66,5 +66,8 @@ RUN chmod a+x /usr/share/nginx/html/perl/service.pl \
 
 EXPOSE 80 443
 
-CMD /etc/init.d/fcgiwrap start; nginx -g "daemon off;"; service postgresql start; /usr/bin/asd --foreground
+CMD service fcgiwrap start \
+	&& service nginx start \
+	&& service postgresql start \
+	&& /usr/bin/asd --foreground
 
