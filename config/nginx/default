@@ -10,7 +10,7 @@ server {
       try_files $uri $uri/ =404;
   } 
 
-  location ^\/api\/(exercise|test)(\/([^\/]+)?)*\??(.*) {
+  location ~ \/api\/(exercise|test)(\/([^\/]+)?)*\??(.*) {
       root /var/www/html/perl;
       gzip off;
       fastcgi_param SERVER_NAME \$http_host;
