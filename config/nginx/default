@@ -10,12 +10,12 @@ server {
       try_files $uri $uri/ =404;
   } 
 
-  location /api/exercise {
-      root /var/www/html;
+  location ^\/api\/(exercise|test)(\/([^\/]+)?)*\??(.*) {
+      root /var/www/html/perl;
       gzip off;
       fastcgi_param SERVER_NAME \$http_host;
       include /etc/nginx/fastcgi_params;
       fastcgi_pass unix:/var/run/fcgiwrap.socket;
-      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name.pl;
+      fastcgi_param SCRIPT_FILENAME $document_root/service.pl;
   } 
 }
