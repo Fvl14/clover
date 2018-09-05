@@ -34,6 +34,7 @@ ADD ./config/aerospike/ /clover/
 ADD ./project/Data/service.pl /usr/share/nginx/html/perl/service.pl
 
 RUN chown  postgres:postgres /clover/clover.sql
+RUN sed -i 's/local   all             postgres                                peer/local   all             postgres                                trust/' /etc/postgresql/main/9.6/pg_hba.conf
 
 USER postgres
 
