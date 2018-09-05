@@ -21,16 +21,17 @@ RUN apt-get update && apt-get install -y \
 	nano \
 	spawn-fcgi \
 	fcgiwrap \
-	cpanminus
+	cpanminus \
+	postgresql-server-dev-9.6
 
 RUN mkdir clover \
 	&& cd clover \
-	&& mkdir /var/www/html/perl
+	&& mkdir /usr/share/nginx/html/perl
 
 ADD ./config/nginx/default /etc/nginx/sites-available/default
 ADD ./config/postgresql/clover.sql /clover/clover.sql
 ADD ./config/aerospike/ /clover/
-ADD ./project/Data/service.pl /var/www/html/perl/service.pl
+ADD ./project/Data/service.pl /usr/share/nginx/html/perl/service.pl
 
 RUN chown  postgres:postgres /clover/clover.sql
 
@@ -42,10 +43,10 @@ RUN service postgresql start \
 
 USER root
 
-RUN chmod a+x /var/www/html/perl/service.pl \
-	&& chmod 0777 var/www/html/perl/service.pl \
-	&& chown  www-data:www-data /var/www/html \
-	&& chown  www-data:www-data /var/www/html/perl/service.pl \
+RUN chmod a+x /usr/share/nginx/html/perl/service.pl \
+	&& chmod 0777 /usr/share/nginx/html/perl/service.pl \
+	&& chown  www-data:www-data /usr/share/nginx/html/perl \
+	&& chown  www-data:www-data /usr/share/nginx/html/perl/service.pl \
 	&& cd clover \
 	&& wget -O aerospike.tgz 'https://www.aerospike.com/download/server/latest/artifact/debian9' \
 	&& tar -xvf aerospike.tgz \
@@ -60,9 +61,9 @@ RUN chmod a+x /var/www/html/perl/service.pl \
 	&& cp /clover/citrusleaf/Makefile /clover/citrusleaf_client_swig_2.1.34/swig/Makefile \
 	&& make LANG=perl \
 	&& cd /clover \
-	&& cpan install -f CGI Mojolicious::Lite Mojo::Pg
+	&& cpan install -f CGI Mojolicious::Lite DBD::Pg Mojo::Pg
 
 EXPOSE 80 443
 
-CMD /etc/init.d/fcgiwrap start; nginx -g "daemon off;"; /usr/bin/asd --foreground
+CMD /etc/init.d/fcgiwrap start; nginx -g "daemon off;"; service postgresql start; /usr/bin/asd --foreground
 
