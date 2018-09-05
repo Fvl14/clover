@@ -24,12 +24,13 @@ RUN apt-get update && apt-get install -y \
 	cpanminus
 
 RUN mkdir clover \
-	&& cd clover
+	&& cd clover \
+	&& mkdir /var/www/html/perl
 
 ADD ./config/nginx/default /etc/nginx/sites-available/default
 ADD ./config/postgresql/clover.sql /clover/clover.sql
 ADD ./config/aerospike/ /clover/
-ADD ./project/Data/service.pl /var/www/html/service.pl
+ADD ./project/Data/service.pl /var/www/html/perl/service.pl
 
 RUN chown  postgres:postgres /clover/clover.sql
 
@@ -41,10 +42,10 @@ RUN service postgresql start \
 
 USER root
 
-RUN chmod a+x /var/www/html/service.pl \
-	&& chmod 0777 var/www/html/service.pl \
+RUN chmod a+x /var/www/html/perl/service.pl \
+	&& chmod 0777 var/www/html/perl/service.pl \
 	&& chown  www-data:www-data /var/www/html \
-	&& chown  www-data:www-data /var/www/html/service.pl \
+	&& chown  www-data:www-data /var/www/html/perl/service.pl \
 	&& cd clover \
 	&& wget -O aerospike.tgz 'https://www.aerospike.com/download/server/latest/artifact/debian9' \
 	&& tar -xvf aerospike.tgz \
