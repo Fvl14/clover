@@ -6,7 +6,6 @@ use Digest::SHA qw(sha256_hex);
 use Mojo::JSON 'encode_json';
 
 use Model::Exercise;
-use Config;
 
 has 'exercise' => (
   is => 'rw',
@@ -20,7 +19,7 @@ __PACKAGE__->meta->make_immutable;
 
 sub BUILD {
   my $self = shift;
-  $self->init();
+  #$self->init();
 }
 
 sub init {
@@ -36,19 +35,20 @@ override 'processRequst' => sub {
 
 sub _build_exercise {
   my $self = shift;
-  $self->exercise(Model::Exercise->new(pg => $self->pg));
+  $self->exercise(Model::Exercise->new());
 }
 
 override 'get' => sub {
   my $self = shift;
   if ($ENV{ID}) {
     my $shaKey = sha256_hex('exercise' . ".$ENV{ID}");
-    my $data = $self->aerospike->getCash($shaKey);
+    my $data = $self->exercise->aerospike->getCash($shaKey);
     if ($data) {
+      $self->render("cool");
       $self->render($data);
     } else {
       $data = $self->exercise->find($ENV{ID});
-      $self->aerospike->storeCash($shaKey, encode_json $data);
+      $self->exercise->aerospike->storeCash($shaKey, encode_json $data);
       $self->render($data);
     }
   } else {

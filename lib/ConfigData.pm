@@ -1,4 +1,4 @@
-package Config;
+package ConfigData;
 
 use Exporter 'import';
 @EXPORT_OK = qw($configData);

@@ -3,7 +3,7 @@ package Aerospike::Client;
 use Moo;
 use MooX::late;
 use TryCatch;
-use Config;
+use Data::Dumper;
 use Aerospike::Client::CitrusLeaf;
 
 has client => (
@@ -33,6 +33,7 @@ sub getCash {
 	try {
 		$res = $self->client->read("$key");
 	} catch ($e) {
+		print Dumper $e;
 		return undef;
 	}
 	return $res;
@@ -73,11 +74,16 @@ sub reWriteCash {
 sub removeCash {
 	my ($self, $key) = @_;
 	try {
-		$a->delete($key);
+		$self->delete($key);
 		return 1;
 	} catch ($e) {
 		return undef;
 	}
+}
+
+sub END {
+	my $self = shift;
+	$self->client->close();
 }
 
 1;

@@ -1,7 +1,22 @@
 package Model::Exercise;
-use Mojo::Base -base;
 
-has 'pg';
+use Moo;
+use MooX::late;
+use MooX::Override -class;
+
+extends 'Model';
+
+__PACKAGE__->meta->make_immutable;
+
+sub BUILD {
+  my $self = shift;
+  $self->init();
+}
+
+sub init {
+  my $self = shift;
+  $self->as_set('exercise');
+}
 
 sub add {
   my ($self, $post) = @_;
