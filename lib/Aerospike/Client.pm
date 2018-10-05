@@ -31,6 +31,7 @@ sub getCash {
 	my ($self, $key) = @_;
 	my $res;
 	try {
+		$self->connect();
 		$res = $self->client->read("$key");
 	} catch ($e) {
 		print Dumper $e;
@@ -81,9 +82,19 @@ sub removeCash {
 	}
 }
 
-sub END {
+sub connect {
 	my $self = shift;
-	$self->client->close();
+	$self->client->connect() if $self->client;
+}
+
+sub close {
+	my $self = shift;
+	$self->client->close() if $self->client;
+}
+
+sub DEMOLISH {
+  my ($self, $in_global_destruction) = @_;
+  $self->client->close() if $self->client;
 }
 
 1;

@@ -18,7 +18,7 @@ __PACKAGE__->meta->make_immutable;
 
 no Moo;
 
-sub processRequst {
+sub processRequest {
 	
 }
 

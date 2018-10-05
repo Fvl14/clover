@@ -27,7 +27,7 @@ __PACKAGE__->meta->make_immutable;
 no Moo;
 
 BEGIN {
-	unshift @INC, '/home/vasyl/Завантаження/citrusleaf_client_swig_2.1.34/swig/perl';
+	unshift @INC, '/home/vasyl/Downloads/citrusleaf_client_swig_2.1.34/swig/perl';
 	require Aerospike::Client;
 }
 
@@ -38,6 +38,8 @@ sub _build_aerospike {
 	            		ns           => $configData->{config_as_namespace},
 	            		set          => $self->as_set,
 	            		conn_timeout => $configData->{config_as_conn_timeout})));
+	#use Data::Dumper;
+	#print Dumper $self->aerospike;
 }
 
 sub _build_pg {

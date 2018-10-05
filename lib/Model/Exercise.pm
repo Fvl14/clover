@@ -15,7 +15,7 @@ sub BUILD {
 
 sub init {
   my $self = shift;
-  $self->as_set('exercise');
+  $self->as_set('testset');
 }
 
 sub add {

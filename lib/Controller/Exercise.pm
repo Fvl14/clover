@@ -27,7 +27,7 @@ sub init {
   $ENV{config_as_set} = "exercise";
 }
 
-override 'processRequst' => sub {
+override 'processRequest' => sub {
   my $self = shift;
   my $method = lc $self->type;
   $self->$method();
@@ -48,7 +48,7 @@ override 'get' => sub {
       $self->render($data);
     } else {
       $data = $self->exercise->find($ENV{ID});
-      $self->exercise->aerospike->storeCash($shaKey, encode_json $data);
+      $self->exercise->aerospike->storeCash($shaKey, encode_json $data) if $data;
       $self->render($data);
     }
   } else {
