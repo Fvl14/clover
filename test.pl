@@ -10,6 +10,12 @@ my $controllers = {
 	exercise => 'Controller::Exercise'
 };
 
+if (!$ENV{REQUEST_METHOD}) {
+	$ENV{CONTROLLER} = shift;
+	$ENV{REQUEST_METHOD} = shift;
+	$ENV{ID} = shift;
+}
+
 if ($controllers->{$ENV{CONTROLLER}}) {
 	eval "require $controllers->{$ENV{CONTROLLER}}";
 	die "Couldn't load controller $controllers->{$ENV{CONTROLLER}} : $@" if $@;
@@ -17,5 +23,5 @@ if ($controllers->{$ENV{CONTROLLER}}) {
 	die "Bad Request";
 }
 
-my $controller = $controllers->{$ENV{CONTROLLER}}->new(cgi => CGI->new(), type => $ENV{REQUEST_METHOD});
-$controller->processRequst();
+my $controller = $controllers->{$ENV{CONTROLLER}}->new(cgi => CGI->new(), type => $ENV{REQUEST_METHOD}, requestUri => $ENV{REQUEST_URI});
+$controller->processRequest();

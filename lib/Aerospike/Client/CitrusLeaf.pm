@@ -282,15 +282,15 @@ sub read_from {
 
         if ($type == citrusleaf::CL_STR) {
             $bininfo{data} = my $data = $bin->{object}->{u}->{str};
-            print "Bin name: ", $name," Resulting string: ",$data, "\n";
+            #print "Bin name: ", $name," Resulting string: ",$data, "\n";
         } elsif ($type == citrusleaf::CL_INT) {
             $bininfo{data} = my $data = $bin->{object}->{u}->{i64};
-            print "Bin name: ",$name," Resulting int: ",$data, "\n";
+            #print "Bin name: ",$name," Resulting int: ",$data, "\n";
         } elsif ($type == citrusleaf::CL_BLOB) {
             $bininfo{data} = my $data = citrusleaf::cdata($bin->{object}->{u}->{blob}, $bin->{object}->{sz});
-            print "Bin name: ",$name," Resulting decompressed blob: ",uncompress($data), "\n";
+            #print "Bin name: ",$name," Resulting decompressed blob: ",uncompress($data), "\n";
         } else{
-            print "Bin name: ",$name," Unknown bin type: ",$type, "\n";
+            #print "Bin name: ",$name," Unknown bin type: ",$type, "\n";
         }
 
         push @bins, \%bininfo;

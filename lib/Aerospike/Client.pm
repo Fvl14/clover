@@ -18,11 +18,7 @@ has client => (
 
 # BEGIN {
 # 	my $self = shift;
-# 	$self->client(Aerospike::Client::CitrusLeaf->new(
-# 					host         => $ENV{config_as_host},
-#             		ns           => $ENV{config_as_namespace},
-#             		set          => $ENV{config_as_set},
-#             		conn_timeout => $ENV{config_as_conn_timeout}));
+# 	$self->connect();
 # }
 
 no Moo;
@@ -31,8 +27,7 @@ sub getCash {
 	my ($self, $key) = @_;
 	my $res;
 	try {
-		$self->connect();
-		$res = $self->client->read("$key");
+		$res = $self->client->read("$key") if $self->connect();
 	} catch ($e) {
 		print Dumper $e;
 		return undef;
@@ -48,9 +43,10 @@ sub storeCash {
             [
                 { name => 'bin', data => $data, type => citrusleaf::CL_STR }
             ]
-        );
+        ) if $self->connect();
         return 1;
 	} catch ($e) {
+		print Dumper $e;
 		return undef;
 	}
 }
@@ -65,9 +61,10 @@ sub reWriteCash {
                 { name => 'bin', data => $data, type => citrusleaf::CL_STR, op => citrusleaf::CL_OP_WRITE }
             ],
             $write_params
-        );
+        ) if $self->connect();
         return 1;
 	} catch ($e) {
+		print Dumper $e;
 		return undef;
 	}
 }
@@ -75,9 +72,10 @@ sub reWriteCash {
 sub removeCash {
 	my ($self, $key) = @_;
 	try {
-		$self->delete($key);
+		$self->delete($key) if $self->connect();
 		return 1;
 	} catch ($e) {
+		print Dumper $e;
 		return undef;
 	}
 }
@@ -87,14 +85,14 @@ sub connect {
 	$self->client->connect() if $self->client;
 }
 
-sub close {
-	my $self = shift;
-	$self->client->close() if $self->client;
-}
+# sub close {
+# 	my $self = shift;
+# 	$self->client->close() if $self->client;
+# }
 
-sub DEMOLISH {
-  my ($self, $in_global_destruction) = @_;
-  $self->client->close() if $self->client;
-}
+# sub DEMOLISH {
+#   my ($self, $in_global_destruction) = @_;
+#   $self->client->close() if $self->client;
+# }
 
 1;

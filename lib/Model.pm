@@ -38,13 +38,37 @@ sub _build_aerospike {
 	            		ns           => $configData->{config_as_namespace},
 	            		set          => $self->as_set,
 	            		conn_timeout => $configData->{config_as_conn_timeout})));
-	#use Data::Dumper;
-	#print Dumper $self->aerospike;
 }
 
 sub _build_pg {
 	my $self = shift;
 	$self->pg(Mojo::Pg->new('postgresql://postgres@/clover'));
+}
+
+sub getCash {
+	my $self = shift;
+	my $key = shift;
+	return $self->aerospike->getCash($key);
+}
+
+sub storeCash {
+	my $self = shift;
+	my $key = shift;
+	my $data = shift;
+	return $self->aerospike->storeCash($key, $data);
+}
+
+sub reWriteCash {
+	my $self = shift;
+	my $key = shift;
+	my $data = shift;
+	return $self->aerospike->reWriteCash($key, $data);
+}
+
+sub removeCash {
+	my $self = shift;
+	my $key = shift;
+	return $self->aerospike->removeCash($key);
 }
 
 1;

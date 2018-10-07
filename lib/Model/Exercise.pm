@@ -3,6 +3,7 @@ package Model::Exercise;
 use Moo;
 use MooX::late;
 use MooX::Override -class;
+use Mojo::JSON qw(decode_json);
 
 extends 'Model';
 
@@ -15,8 +16,15 @@ sub BUILD {
 
 sub init {
   my $self = shift;
-  $self->as_set('testset');
+  $self->as_set('exercise');
 }
+
+override 'getCash' => sub {
+  my $self = shift;
+  my $key = shift;
+  my $data = super($key);
+  return $data? decode_json $data->[0]->{data} : $data;
+};
 
 sub add {
   my ($self, $post) = @_;
