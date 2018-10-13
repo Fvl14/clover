@@ -29,7 +29,7 @@ sub getCash {
 	try {
 		$res = $self->client->read("$key") if $self->connect();
 	} catch ($e) {
-		print Dumper $e;
+		print STDERR Dumper $e;
 		return undef;
 	}
 	return $res;
@@ -46,7 +46,7 @@ sub storeCash {
         ) if $self->connect();
         return 1;
 	} catch ($e) {
-		print Dumper $e;
+		print STDERR Dumper $e;
 		return undef;
 	}
 }
@@ -64,7 +64,7 @@ sub reWriteCash {
         ) if $self->connect();
         return 1;
 	} catch ($e) {
-		print Dumper $e;
+		print STDERR Dumper $e;
 		return undef;
 	}
 }
@@ -72,10 +72,10 @@ sub reWriteCash {
 sub removeCash {
 	my ($self, $key) = @_;
 	try {
-		$self->delete($key) if $self->connect();
+		$self->client->delete($key) if $self->connect();
 		return 1;
 	} catch ($e) {
-		print Dumper $e;
+		print STDERR Dumper $e;
 		return undef;
 	}
 }

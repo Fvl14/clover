@@ -17,24 +17,6 @@ extends 'Controller';
 
 __PACKAGE__->meta->make_immutable;
 
-override 'mapping' => sub {
-  return {
-    'GET' => {
-              '/aaa/exercise' => 'showAll',
-              '/aaa/exercise/{id:\d+}' => 'show'
-            },
-    'POST' => {
-              '/aaa/exercise' => 'store'
-    },
-    'PUT' => {
-              '/aaa/exercise/{id:\d+}' => 'update'
-    },
-    'DELETE' => {
-              '/aaa/exercise/{id:\d+}' => 'remove'
-    }
-  }
-};
-
 sub _build_exercise {
   my $self = shift;
   $self->exercise(Model::Exercise->new());
@@ -44,15 +26,70 @@ sub _validation {
   my $self = shift;
   my $params = shift;
   my $warning = '';
-
+  my $p = {};
+  
   foreach ('description', 'name_function', 'input_parameter', 'output_parameter') {
-    if (!$params->param($_)) {
+    if (!$params->{$_}) {
       $warning .= "Parameter $_ is required";
+    } else {
+      $p->{$_} = $params->{$_};
     }
   }
 
-  return $warning;
+  return ($warning, $p);
 }
+
+override 'get' => sub {
+  my $self = shift;
+
+  my $id = $self->captures->{id};
+  if ($id) {
+    $self->show($id);
+  } else {
+    $self->showAll();
+  }
+
+};
+
+override 'post' => sub {
+  my $self = shift;
+
+  my ($warn, $params) = $self->_validation($self->body);
+  return $self->render({warning => $warn}) if $warn;
+
+  my $id = $self->exercise->add($params);
+  $self->render({id => $id});
+};
+
+override 'put' => sub {
+  my $self = shift;
+
+  my $id = $self->captures->{id};
+  if ($id) {
+    my ($warn, $params) = $self->_validation($self->body);
+    return $self->render({warning => $warn}) if $warn;
+
+    my $data = $self->exercise->save($id, $params);
+    $self->exercise->reWriteCash(sha256_hex('exercise' . $id), encode_json $data);
+    $self->show($id);
+  } else {
+    die "Parameter 'id' is required";
+  }
+};
+
+override 'delete' => sub {
+  my $self = shift;
+
+  my $id = $self->captures->{id};
+  if ($id) {
+    my $shaKey = sha256_hex('exercise' . $id);
+    $self->exercise->removeCash($shaKey);
+    $self->exercise->remove($id);
+    $self->render({$id => 'deleted'});
+  } else {
+    die "Parameter 'id' is required";
+  }
+};
 
 sub showAll {
   my $self = shift;
@@ -60,46 +97,14 @@ sub showAll {
 }
 
 sub show {
-  my ($self, $params, $captures) = @_;
-  my $shaKey = sha256_hex('exercise' . ".$captures->{id}");
+  my ($self, $id) = @_;
+  my $shaKey = sha256_hex('exercise' . $id);
   my $data = $self->exercise->getCash($shaKey);
-  if ($data) {
-      $self->render($data);
-  } else {
-      $data = $self->exercise->find($captures->{id});
+  if (!$data) {
+      $data = $self->exercise->find($id);
       $self->exercise->storeCash($shaKey, encode_json $data) if $data;
-      $self->render($data);
   }
-}
-
-sub store {
-  my ($self, $params, $captures) = @_;
-
-  my $warn = $self->_validation($params);
-  return $self->render({warning => $warn}) if $warn;
-
-  my $id = $self->exercise->add($params);
-  $self->show($params, $captures);
-}
-
-sub update {
-  my ($self, $params, $captures) = @_;
-
-  my $warn = $self->_validation($params);
-  return $self->render({warning => $warn}) if $warn;
-
-  my $id = $captures->{id};
-  my $data = $self->exercise->save($id, $params);
-  $self->exercise->reWriteCash(sha256_hex('exercise' . ".$captures->{id}"), encode_json $data);
-  $self->show($params, $captures);
-}
-
-sub remove {
-  my ($self, $params, $captures) = @_;
-  my $shaKey = sha256_hex('exercise' . ".$captures->{id}");
-  $self->exercise->removeCash($shaKey);
-  $self->exercise->remove($captures->{id});
-  $self->show($params, $captures);
+  $self->render($data);
 }
 
 # use Mojo::Base 'Mojolicious::Controller';
