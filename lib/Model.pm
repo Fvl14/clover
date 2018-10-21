@@ -45,30 +45,24 @@ sub _build_pg {
 	$self->pg(Mojo::Pg->new('postgresql://postgres@/clover'));
 }
 
-sub getCash {
-	my $self = shift;
-	my $key = shift;
-	return $self->aerospike->getCash($key);
+sub getCach {
+	my ($self, $key, $set) = @_;
+	return $self->aerospike->getCach($key, $set);
 }
 
-sub storeCash {
-	my $self = shift;
-	my $key = shift;
-	my $data = shift;
-	return $self->aerospike->storeCash($key, $data);
+sub storeCach {
+	my ($self, $key, $data, $set) = @_;
+	return $self->aerospike->storeCach($key, $data, $set);
 }
 
-sub reWriteCash {
-	my $self = shift;
-	my $key = shift;
-	my $data = shift;
-	return $self->aerospike->reWriteCash($key, $data);
+sub reWriteCach {
+	my ($self, $key, $data, $set) = @_;
+	return $self->aerospike->reWriteCach($key, $data, $set);
 }
 
-sub removeCash {
-	my $self = shift;
-	my $key = shift;
-	return $self->aerospike->removeCash($key);
+sub removeCach {
+	my ($self, $key, $set) = @_;
+	return $self->aerospike->removeCach($key, $set);
 }
 
 1;

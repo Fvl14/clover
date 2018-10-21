@@ -19,7 +19,7 @@ sub init {
   $self->as_set('exercise');
 }
 
-override 'getCash' => sub {
+override 'getCach' => sub {
   my $self = shift;
   my $key = shift;
   my $data = super($key);

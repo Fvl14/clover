@@ -1,5 +1,6 @@
 package Controller::Exercise;
 use Moo;
+with('Role::Authenticate');
 use MooX::late;
 use MooX::Override -class;
 use Digest::SHA qw(sha256_hex);
@@ -70,7 +71,7 @@ override 'put' => sub {
     return $self->render({warning => $warn}) if $warn;
 
     my $data = $self->exercise->save($id, $params);
-    $self->exercise->reWriteCash(sha256_hex('exercise' . $id), encode_json $data);
+    $self->exercise->reWriteCach(sha256_hex('exercise' . $id), encode_json $data);
     $self->show($id);
   } else {
     die "Parameter 'id' is required";
@@ -83,7 +84,7 @@ override 'delete' => sub {
   my $id = $self->captures->{id};
   if ($id) {
     my $shaKey = sha256_hex('exercise' . $id);
-    $self->exercise->removeCash($shaKey);
+    $self->exercise->removeCach($shaKey);
     $self->exercise->remove($id);
     $self->render({$id => 'deleted'});
   } else {
@@ -99,10 +100,10 @@ sub showAll {
 sub show {
   my ($self, $id) = @_;
   my $shaKey = sha256_hex('exercise' . $id);
-  my $data = $self->exercise->getCash($shaKey);
+  my $data = $self->exercise->getCach($shaKey);
   if (!$data) {
       $data = $self->exercise->find($id);
-      $self->exercise->storeCash($shaKey, encode_json $data) if $data;
+      $self->exercise->storeCach($shaKey, encode_json $data) if $data;
   }
   $self->render($data);
 }

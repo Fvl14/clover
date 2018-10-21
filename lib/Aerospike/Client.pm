@@ -23,11 +23,11 @@ has client => (
 
 no Moo;
 
-sub getCash {
-	my ($self, $key) = @_;
+sub getCach {
+	my ($self, $key, $set) = @_;
 	my $res;
 	try {
-		$res = $self->client->read("$key") if $self->connect();
+		$res = $self->client->read("$key") if $self->connect($set);
 	} catch ($e) {
 		print STDERR Dumper $e;
 		return undef;
@@ -35,15 +35,15 @@ sub getCash {
 	return $res;
 }
 
-sub storeCash {
-	my ($self, $key, $data) = @_;
+sub storeCach {
+	my ($self, $key, $data, $set) = @_;
 	try {
 		$self->client->write(
             "$key",
             [
                 { name => 'bin', data => $data, type => citrusleaf::CL_STR }
             ]
-        ) if $self->connect();
+        ) if $self->connect($set);
         return 1;
 	} catch ($e) {
 		print STDERR Dumper $e;
@@ -51,8 +51,8 @@ sub storeCash {
 	}
 }
 
-sub reWriteCash {
-	my ($self, $key, $data) = @_;
+sub reWriteCach {
+	my ($self, $key, $data, $set) = @_;
 	my $write_params = undef;
 	try {
 		$self->client->operate(
@@ -61,7 +61,7 @@ sub reWriteCash {
                 { name => 'bin', data => $data, type => citrusleaf::CL_STR, op => citrusleaf::CL_OP_WRITE }
             ],
             $write_params
-        ) if $self->connect();
+        ) if $self->connect($set);
         return 1;
 	} catch ($e) {
 		print STDERR Dumper $e;
@@ -69,10 +69,10 @@ sub reWriteCash {
 	}
 }
 
-sub removeCash {
-	my ($self, $key) = @_;
+sub removeCach {
+	my ($self, $key, $set) = @_;
 	try {
-		$self->client->delete($key) if $self->connect();
+		$self->client->delete($key) if $self->connect($set);
 		return 1;
 	} catch ($e) {
 		print STDERR Dumper $e;
@@ -81,8 +81,16 @@ sub removeCash {
 }
 
 sub connect {
-	my $self = shift;
-	$self->client->connect() if $self->client;
+	my ($self, $set) = @_;
+	if ($self->client) {
+		if ($set) {
+			$self->client->set_set($set);
+			$self->client->set_connected(0);
+			$self->client->connect()
+		} else {
+			$self->client->connect()
+		}
+	}
 }
 
 # sub close {
