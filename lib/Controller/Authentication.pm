@@ -56,20 +56,20 @@ override 'post' => sub {
   my ($token, $date);
 
   my ($warn, $params) = $self->_validation($self->body);
-  return $self->render({warning => $warn}) if $warn;
+  return $self->render({data => {warning => $warn}, code => 400}) if $warn;
 
   my $password = $self->findPasswordByEmail($params->{email});
-  return $self->render({warning => 'wrong email'}) if !$password;
+  return $self->render({data => {warning => 'wrong email'}, code => 400}) if !$password;
 
   if ($params->{password} eq $password) {
   	$token = Session::Token->new(entropy => 256)->get;
   	$date = time;
   	$self->storeIntoCach({token => $token, email => $params->{email}, date => $date});
   } else {
-  	die 'wrong password';
+  	return $self->render({data => {error => 'wrong password'}, code => 401});
   }
 
-  return $self->render({token => $token, date => $date});
+  return $self->render({data => {token => $token, date => $date}});
 };
 
 sub findPasswordByEmail {

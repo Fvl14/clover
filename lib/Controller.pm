@@ -47,62 +47,47 @@ sub BUILD {
 
 sub _build_body {
 	my $self = shift;
-	$self->body(decode_json $self->params->{POSTDATA});
+	$self->body(decode_json $self->params->{$self->type . 'DATA'});
 }
 
 no Moo;
 
 sub processRequest {
 	my $self = shift;
-	#my $method = $self->dispatcher();
 	my $method = lc $self->type();
 	$self->$method();
 }
 
-# sub dispatcher {
-# 	my $self = shift;
-# 	return $self->getMethod($self->getFromMapping());
-# }
+sub get { {data => {error => 'The GET method has not been defined'}, code => 405} }
 
-# sub getMethod {
-# 	my $self = shift;
-# 	my $mapping = shift;
-# 	return Router::R3->new($mapping)->match($self->requestUri);
-# }
+sub post { {data => {error => 'The POST method has not been defined'}, code => 405} }
 
-# sub getFromMapping {
-# 	my $self = shift;
-# 	my $mapping = $self->mapping();
-# 	return $mapping->{$self->type} ? $mapping->{$self->type} : {}; 
-# }
+sub put { {data => {error => 'The PUT method has not been defined'}, code => 405} }
 
-# sub mapping {
-# 	return {}
-# }
+sub patch { {data => {error => 'The PATCH method has not been defined'}, code => 405} }
 
-sub get { die 'The GET method has not been defined' }
+sub delete { {data => {error => 'The DELETE method has not been defined'}, code => 405} }
 
-sub post { die 'The POST method has not been defined' }
+sub head { {data => {error => 'The HEAD method has not been defined'}, code => 405} }
 
-sub put { die 'The PUT method has not been defined' }
+sub conn { {data => {error => 'The CONN method has not been defined'}, code => 405} }
 
-sub patch { die 'The PATCH method has not been defined' }
+sub options { {data => {error => 'The OPTIONS method has not been defined'}, code => 405} }
 
-sub delete { die 'The DELETE method has not been defined' }
+sub any { {data => {error => 'The ANY method has not been defined'}, code => 405} }
 
-sub head { die 'The HEAD method has not been defined' }
-
-sub conn { die 'The CONN method has not been defined' }
-
-sub options { die 'The OPTIONS method has not been defined' }
-
-sub any { die 'The ANY method has not been defined' }
+sub _validation {{code => 502}}
 
 sub render {
 	my $self = shift;
 	my $data = shift;
-	print $self->cgi->header('application/json');
-	print encode_json $data;
+	my %data = ((code => 200, data => undef), defined $data && ref $data eq 'HASH' ? %$data : ());
+	print $self->cgi->header(
+		-type =>'application/json',
+		-charset => 'utf-8',
+		-status => $data{code});
+	print encode_json $data{data};
+	exit;
 }
 
 1;

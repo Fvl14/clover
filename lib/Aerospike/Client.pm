@@ -8,18 +8,9 @@ use Aerospike::Client::CitrusLeaf;
 
 has client => (
   is  => 'rw',
-  isa => 'Aerospike::Client::CitrusLeaf',
-  # default => Aerospike::Client::CitrusLeaf->new(
-		# 			host         => $ENV{config_as_host},
-  #           		ns           => $ENV{config_as_namespace},
-  #           		set          => $ENV{config_as_set},
-  #           		conn_timeout => $ENV{config_as_conn_timeout})
+  isa => 'Aerospike::Client::CitrusLeaf'
 );
 
-# BEGIN {
-# 	my $self = shift;
-# 	$self->connect();
-# }
 
 no Moo;
 

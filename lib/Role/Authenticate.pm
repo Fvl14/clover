@@ -49,15 +49,15 @@ sub authenticate {
 	my $self = shift;
 
 	my $token = $self->token;
-	die 'Can\'t get token' if !$token;
+	return $self->render({data => {error => 'Token error'}, code => 401}) if !$token;
 
 	my $tokenCached = $self->checkTokenInCach($token);
-	die 'Wrong token' if !$tokenCached;
+	return $self->render({data => {error => 'Wrong token'}, code => 401}) if !$tokenCached;
 
 	my $date = time;
 	if ($date - $tokenCached->{date} > 360) {
 		$self->removeOldToken($token);
-		die 'New token is needed.';
+		return $self->render({data => {error => 'New token is needed.'}, code => 401});
 	}
 }
 

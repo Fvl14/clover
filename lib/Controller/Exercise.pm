@@ -56,10 +56,10 @@ override 'post' => sub {
   my $self = shift;
 
   my ($warn, $params) = $self->_validation($self->body);
-  return $self->render({warning => $warn}) if $warn;
+  return $self->render({data => {warning => $warn}, code => 400}) if $warn;
 
   my $id = $self->exercise->add($params);
-  $self->render({id => $id});
+  $self->render({data => {id => $id}});
 };
 
 override 'put' => sub {
@@ -68,13 +68,13 @@ override 'put' => sub {
   my $id = $self->captures->{id};
   if ($id) {
     my ($warn, $params) = $self->_validation($self->body);
-    return $self->render({warning => $warn}) if $warn;
+    return $self->render({data => {warning => $warn}, code => 400}) if $warn;
 
     my $data = $self->exercise->save($id, $params);
     $self->exercise->reWriteCach(sha256_hex('exercise' . $id), encode_json $data);
     $self->show($id);
   } else {
-    die "Parameter 'id' is required";
+     return $self->render({data => {warning => "Parameter 'id' is required"}, code => 400});
   }
 };
 
@@ -86,15 +86,15 @@ override 'delete' => sub {
     my $shaKey = sha256_hex('exercise' . $id);
     $self->exercise->removeCach($shaKey);
     $self->exercise->remove($id);
-    $self->render({$id => 'deleted'});
+    $self->render({data => {$id => 'deleted'}});
   } else {
-    die "Parameter 'id' is required";
+    return $self->render({data => {error => "Parameter 'id' is required"}, code => 401});
   }
 };
 
 sub showAll {
   my $self = shift;
-  $self->render($self->exercise->all);
+  $self->render({data => $self->exercise->all});
 }
 
 sub show {
@@ -105,65 +105,7 @@ sub show {
       $data = $self->exercise->find($id);
       $self->exercise->storeCach($shaKey, encode_json $data) if $data;
   }
-  $self->render($data);
+  $self->render({data => $data});
 }
-
-# use Mojo::Base 'Mojolicious::Controller';
-
-# sub create { shift->render(exercise => {}) }
-
-# sub edit {
-#   my $self = shift;
-#   $self->render(exercise => $self->exercise->find($self->param('id')));
-# }
-
-# sub index {
-#   my $self = shift;
-#   $self->render(exercise => $self->exercise->all);
-# }
-
-# sub remove {
-#   my $self = shift;
-#   $self->exercise->remove($self->param('id'));
-#   $self->redirect_to('exercise');
-# }
-
-# sub show {
-#   my $self = shift;
-#   $self->render(exercise => $self->exercise->find($self->param('id')));
-# }
-
-# sub store {
-#   my $self = shift;
-
-#   my $v = $self->_validation;
-#   return $self->render(action => 'create', exercise => {}) if $v->has_error;
-
-#   my $id = $self->exercise->add($v->output);
-#   $self->redirect_to('show_exercise', id => $id);
-# }
-
-# sub update {
-#   my $self = shift;
-
-#   my $v = $self->_validation;
-#   return $self->render(action => 'edit', exercise => {}) if $v->has_error;
-
-#   my $id = $self->param('id');
-#   $self->exercise->save($id, $v->output);
-#   $self->redirect_to('show_exercise', id => $id);
-# }
-
-# sub _validation {
-#   my $self = shift;
-
-#   my $v = $self->validation;
-#   $v->required('description');
-#   $v->required('name_function');
-#   $v->required('input_parameter');
-#   $v->required('output_parameter');
-
-#   return $v;
-# }
 
 1;
