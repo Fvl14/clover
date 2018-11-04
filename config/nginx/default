@@ -3,6 +3,15 @@ server {
   listen [::]:80 default_server ipv6only=on;
   error_log  /var/log/nginx/error.log  debug;
 
+  #SSL
+  listen 443 ssl default_server;
+  listen [::]:443 ssl default_server;
+  ssl_prefer_server_ciphers on;
+  ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+  ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES";
+  ssl_certificate /etc/ssl/private/server.crt;
+  ssl_certificate_key /etc/ssl/private/server.key;
+
   root /usr/share/nginx/html; 
   server_name _;
 
@@ -11,7 +20,7 @@ server {
       try_files $uri $uri/ =404;
   } 
 
-  location ~ \/api\/(exercise|test)(\/([^\/]+)?)*\??(.*) {
+  location ~ \/api\/(exercise|login|test)(\/([^\/]+)?)*\??(.*) {
       root /usr/share/nginx/html/perl;
       gzip off;
       fastcgi_param SERVER_NAME \$http_host;
