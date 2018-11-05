@@ -16,7 +16,11 @@ our $configData = {
 our $router = [
 	'/api/exercise' => 'Controller::Exercise',
     '/api/exercise/{id:\d+}' => 'Controller::Exercise',
-    '/api/login' => 'Controller::Authentication'
+    '/api/login' => 'Controller::Authentication',
+    '/api/registration' => 'Controller::Registration',
+    '/api/user' => 'Controller::User',
+    '/api/user/{id:\d+}' => 'Controller::User',
+    '/api/logout' => 'Controller::Logout'
 ];
 
 1;

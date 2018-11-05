@@ -52,7 +52,7 @@ sub authenticate {
 	return $self->render({data => {error => 'Token error'}, code => 401}) if !$token;
 
 	my $tokenCached = $self->checkTokenInCach($token);
-	return $self->render({data => {error => 'Wrong token'}, code => 401}) if !$tokenCached;
+	return $self->render({data => {error => 'Invalid authorization token provided.'}, code => 401}) if !$tokenCached;
 
 	my $date = time;
 	if ($date - $tokenCached->{date} > 360) {
