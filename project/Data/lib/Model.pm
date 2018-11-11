@@ -42,7 +42,7 @@ sub _build_aerospike {
 
 sub _build_pg {
 	my $self = shift;
-	$self->pg(Mojo::Pg->new('postgresql://postgres@/clover'));
+	$self->pg(Mojo::Pg->new('postgresql://' . $configData->{config_pg_user} . ':' . $configData->{config_pg_pass} . '@/clover'));
 }
 
 sub getCach {

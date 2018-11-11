@@ -23,6 +23,7 @@ server {
   location ~ \/api\/(exercise|login|test)(\/([^\/]+)?)*\??(.*) {
       root /usr/share/nginx/html/perl;
       gzip off;
+      fastcgi_param PG_USER      fastcgi_param PG_PASS
       fastcgi_param SERVER_NAME \$http_host;
       include /etc/nginx/fastcgi_params;
       fastcgi_pass unix:/var/run/fcgiwrap.socket;

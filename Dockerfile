@@ -38,13 +38,21 @@ ADD ./project/Data/service.pl /usr/share/nginx/html/perl/service.pl
 ADD ./project/Data/lib /usr/share/nginx/html/perl/lib
 
 RUN chown  postgres:postgres /clover/clover.sql
-RUN sed -i 's/local   all             postgres                                peer/local   all             postgres                                trust/' /etc/postgresql/9.6/main/pg_hba.conf
+RUN sed -i 's/local   all             all                                     peer/local   all             all                                     md5/' /etc/postgresql/9.6/main/pg_hba.conf
+
+ARG PG_USER=userclover
+ARG PG_PASS=12345
+
+RUN sed -i 's/fastcgi_param PG_USER      fastcgi_param PG_PASS/fastcgi_param PG_USER '$PG_USER';     fastcgi_param PG_PASS '$PG_PASS';/' /etc/nginx/sites-available/default
 
 USER postgres
 
 RUN service postgresql start \
+	&& createuser $PG_USER \
+	&& psql -c "alter user $PG_USER with password '$PG_PASS';" \
 	&& createdb clover \
-	&& psql --username=postgres clover < /clover/clover.sql
+	&& psql --username=postgres clover < /clover/clover.sql \
+	&& psql -d clover -c "grant all privileges on all tables in schema public to $PG_USER;"
 
 USER root
 
@@ -55,7 +63,7 @@ RUN chmod a+x /usr/share/nginx/html/perl/service.pl \
 	&& cd clover \
 	&& wget -O aerospike.tgz 'https://www.aerospike.com/download/server/latest/artifact/debian9' \
 	&& tar -xvf aerospike.tgz \
-	&& cd aerospike-server-community-4.3.1.4-debian9/ \
+	&& cd aerospike-server-community-4.3.1.5-debian9/ \
 	&& ./asinstall \
 	&& cd /clover \
 	&& wget -O citrusleaf_client_swig_2.1.34.tgz 'https://www.aerospike.com/download/client/perl/2.1.34/artifact/tgz' \
@@ -67,7 +75,7 @@ RUN chmod a+x /usr/share/nginx/html/perl/service.pl \
 	&& cp /clover/aerospike.conf /etc/aerospike/aerospike.conf \
 	&& make LANG=perl \
 	&& cd /clover \
-	&& cpan install -f CGI DBD::Pg Mojo::Pg TryCatch Moo MooX::late Session::Token Mojo::JSON Digest::SHA MooX::Override Router::R3
+	&& cpan install -f CGI DBD::Pg Mojo::Pg TryCatch Moo MooX::late Session::Token Mojo::JSON MooX::Override Router::R3
 
 EXPOSE 80 443
 

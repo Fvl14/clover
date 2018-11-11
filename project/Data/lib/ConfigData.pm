@@ -4,7 +4,9 @@ use Exporter 'import';
 @EXPORT_OK = qw($configData $router);
 
 our $configData = {
-	config_host => 'localhost',
+	#postgres
+	config_pg_user => $ENV{PG_USER},
+	config_pg_pass => $ENV{PG_PASS},
 
 	#aerospike
 	config_as_namespace => 'clover',
