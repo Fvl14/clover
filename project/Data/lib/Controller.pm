@@ -47,6 +47,7 @@ sub BUILD {
 
 sub _build_body {
 	my $self = shift;
+	$self->render({data => {error => 'Body is empty'}, code => 400}) if !$self->params->{$self->type . 'DATA'};
 	$self->body(decode_json $self->params->{$self->type . 'DATA'});
 }
 
@@ -58,25 +59,25 @@ sub processRequest {
 	$self->$method();
 }
 
-sub get { {data => {error => 'The GET method has not been defined'}, code => 405} }
+sub get { shift->render({data => {error => 'The GET method has not been defined'}, code => 405}) }
 
-sub post { {data => {error => 'The POST method has not been defined'}, code => 405} }
+sub post { shift->render({data => {error => 'The POST method has not been defined'}, code => 405}) }
 
-sub put { {data => {error => 'The PUT method has not been defined'}, code => 405} }
+sub put { shift->render({data => {error => 'The PUT method has not been defined'}, code => 405}) }
 
-sub patch { {data => {error => 'The PATCH method has not been defined'}, code => 405} }
+sub patch { shift->render({data => {error => 'The PATCH method has not been defined'}, code => 405}) }
 
-sub delete { {data => {error => 'The DELETE method has not been defined'}, code => 405} }
+sub delete { shift->render({data => {error => 'The DELETE method has not been defined'}, code => 405}) }
 
-sub head { {data => {error => 'The HEAD method has not been defined'}, code => 405} }
+sub head { shift->render({data => {error => 'The HEAD method has not been defined'}, code => 405}) }
 
-sub conn { {data => {error => 'The CONN method has not been defined'}, code => 405} }
+sub conn { shift->render({data => {error => 'The CONN method has not been defined'}, code => 405}) }
 
-sub options { {data => {error => 'The OPTIONS method has not been defined'}, code => 405} }
+sub options { shift->render({data => {error => 'The OPTIONS method has not been defined'}, code => 405}) }
 
-sub any { {data => {error => 'The ANY method has not been defined'}, code => 405} }
+sub any { shift->render({data => {error => 'The ANY method has not been defined'}, code => 405}) }
 
-sub _validation {{code => 502}}
+sub _validation {shift->render({code => 502})}
 
 sub render {
 	my $self = shift;

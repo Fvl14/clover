@@ -1,13 +1,8 @@
 FROM debian
 
 RUN apt-get update && apt-get install -y \
-	curl \
-	libcurl4-gnutls-dev \
-	libexpat1-dev \
 	gettext libz-dev \
 	libssl-dev \
-	git \
-	sudo \
 	postgresql \
 	make \
 	gcc \
@@ -16,9 +11,7 @@ RUN apt-get update && apt-get install -y \
 	wget \
 	python \
 	libgnome2-perl \
-	systemd \
 	nginx \
-	nano \
 	spawn-fcgi \
 	fcgiwrap \
 	cpanminus \
@@ -52,7 +45,7 @@ RUN service postgresql start \
 	&& psql -c "alter user $PG_USER with password '$PG_PASS';" \
 	&& createdb clover \
 	&& psql --username=postgres clover < /clover/clover.sql \
-	&& psql -d clover -c "grant all privileges on all tables in schema public to $PG_USER;"
+	&& psql -d clover -c "grant SELECT, UPDATE, INSERT, DELETE on all tables in schema public to $PG_USER;"
 
 USER root
 
