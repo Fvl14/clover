@@ -126,3 +126,10 @@ ALTER TABLE "result" ADD CONSTRAINT "result_fk2" FOREIGN KEY ("language_id") REF
 
 ALTER TABLE "solution_reports" ADD CONSTRAINT "solution_reports_fk0" FOREIGN KEY ("result_id") REFERENCES "result"("id");
 
+INSERT INTO "role"(name) VALUES('admin');
+INSERT INTO "role"(name) VALUES('user');
+
+INSERT INTO "program_language"(language_name) VALUES('php');
+INSERT INTO "program_language"(language_name) VALUES('perl');
+INSERT INTO "program_language"(language_name) VALUES('python');
+INSERT INTO "program_language"(language_name) VALUES('go');

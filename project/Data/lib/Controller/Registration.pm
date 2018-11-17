@@ -29,7 +29,7 @@ override '_validation' => sub {
   my $warning = '';
   my $p = {};
   
-  foreach ('password', 'email', 'role_id') {
+  foreach ('password', 'email') {
     if (!$params->{$_}) {
       $warning .= "Parameter $_ is required";
     } else {

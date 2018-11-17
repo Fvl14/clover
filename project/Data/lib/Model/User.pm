@@ -4,6 +4,7 @@ use Moo;
 use MooX::late;
 use MooX::Override -class;
 use Mojo::JSON qw(decode_json);
+use Digest::SHA qw(sha256_hex);
 
 extends 'Model';
 
@@ -28,6 +29,8 @@ override 'getCach' => sub {
 
 sub add {
   my ($self, $post) = @_;
+  $post->{password} = sha256_hex($post->{password});
+  $post->{role_id} = $post->{role_id}? $post->{role_id} : $self->pg->db->select('role', 'id', {name => 'user'})->hash->{id};
   return $self->pg->db->insert('user', $post, {returning => 'id'})->hash->{id};
 }
 

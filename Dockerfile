@@ -45,7 +45,8 @@ RUN service postgresql start \
 	&& psql -c "alter user $PG_USER with password '$PG_PASS';" \
 	&& createdb clover \
 	&& psql --username=postgres clover < /clover/clover.sql \
-	&& psql -d clover -c "grant SELECT, UPDATE, INSERT, DELETE on all tables in schema public to $PG_USER;"
+	&& psql -d clover -c "grant SELECT, UPDATE, INSERT, DELETE on all tables in schema public to $PG_USER;" \
+	&& psql -d clover -c "grant usage, select on all sequences in schema public to $PG_USER;"
 
 USER root
 

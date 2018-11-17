@@ -5,6 +5,7 @@ use MooX::late;
 use TryCatch;
 use Mojo::Pg;
 use ConfigData qw ($configData);
+use Aerospike::Client;
 
 has 'aerospike' => (
   is => 'rw',
@@ -26,10 +27,10 @@ __PACKAGE__->meta->make_immutable;
 
 no Moo;
 
-BEGIN {
-	unshift @INC, '/clover/citrusleaf_client_swig_2.1.34/swig/perl';
-	require Aerospike::Client;
-}
+# BEGIN {
+# 	unshift @INC, '/home/vasyl/Завантаження/citrusleaf_client_swig_2.1.34/swig/perl';
+# 	require Aerospike::Client;
+# }
 
 sub _build_aerospike {
 	my $self = shift;

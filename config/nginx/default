@@ -20,7 +20,7 @@ server {
       try_files $uri $uri/ =404;
   } 
 
-  location ~ \/api\/(exercise|login|test)(\/([^\/]+)?)*\??(.*) {
+  location ~ \/api\/(exercise|login|logout|registration|user)(\/([^\/]+)?)*\??(.*) {
       root /usr/share/nginx/html/perl;
       gzip off;
       fastcgi_param PG_USER      fastcgi_param PG_PASS

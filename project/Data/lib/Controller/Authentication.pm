@@ -61,7 +61,7 @@ override 'post' => sub {
   my $password = $self->findPasswordByEmail($params->{email});
   return $self->render({data => {warning => 'wrong email'}, code => 400}) if !$password;
 
-  if ($params->{password} eq $password) {
+  if (sha256_hex($params->{password}) eq $password) {
   	$token = Session::Token->new(entropy => 256)->get;
   	$date = time;
   	$self->storeIntoCach({token => $token, email => $params->{email}, date => $date});
