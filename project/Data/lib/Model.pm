@@ -27,7 +27,7 @@ __PACKAGE__->meta->make_immutable;
 no Moo;
 
 BEGIN {
-	unshift @INC, '/home/vasyl/Завантаження/citrusleaf_client_swig_2.1.34/swig/perl';
+	unshift @INC, '/clover/citrusleaf_client_swig_2.1.34/swig/perl';
 	require Aerospike::Client;
 }
 
