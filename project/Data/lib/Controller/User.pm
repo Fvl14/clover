@@ -19,7 +19,7 @@ sub _validation {
   my $warning = '';
   my $p = {};
   
-  foreach ('password', 'email', 'role') {
+  foreach ('password', 'email') {
     if (!$params->{$_}) {
       $warning .= "Parameter $_ is required";
     } else {
@@ -52,21 +52,21 @@ override 'post' => sub {
   $self->render({data => {id => $id}});
 };
 
-override 'put' => sub {
-  my $self = shift;
+# override 'put' => sub {
+#   my $self = shift;
 
-  my $id = $self->captures->{id};
-  if ($id) {
-    my ($warn, $params) = $self->_validation($self->body);
-    return $self->render({data => {warning => $warn}, code => 400}) if $warn;
+#   my $id = $self->captures->{id};
+#   if ($id) {
+#     my ($warn, $params) = $self->_validation($self->body);
+#     return $self->render({data => {warning => $warn}, code => 400}) if $warn;
 
-    my $data = $self->user->save($id, $params);
-    $self->user->reWriteCach(sha256_hex('user' . $id), encode_json $data);
-    $self->show($id);
-  } else {
-     return $self->render({data => {warning => "Parameter 'id' is required"}, code => 400});
-  }
-};
+#     my $data = $self->user->save($id, $params);
+#     $self->user->reWriteCach(sha256_hex('user' . $id), encode_json $data);
+#     $self->show($id);
+#   } else {
+#      return $self->render({data => {warning => "Parameter 'id' is required"}, code => 400});
+#   }
+# };
 
 override 'delete' => sub {
   my $self = shift;

@@ -48,6 +48,7 @@ sub remove {
 
 sub save {
   my ($self, $id, $post) = @_;
+  $post->{password} = sha256_hex($post->{password});
   $self->pg->db->update('user', $post, {id => $id});
 }
 

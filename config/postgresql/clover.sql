@@ -12,7 +12,7 @@ CREATE TABLE "user" (
 
 CREATE TABLE "role" (
 	"id" serial NOT NULL,
-	"name" varchar(64) NOT NULL,
+	"name" varchar(64) UNIQUE NOT NULL,
 	CONSTRAINT role_pk PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE
@@ -34,7 +34,7 @@ CREATE TABLE "recovery" (
 
 CREATE TABLE "users_skill" (
 	"id" serial NOT NULL,
-	"skill_name" varchar(256) NOT NULL,
+	"skill_name" varchar(256) UNIQUE NOT NULL,
 	"parrent_id" int,
 	"language_id" int NOT NULL,
 	CONSTRAINT users_skill_pk PRIMARY KEY ("id")
@@ -46,7 +46,7 @@ CREATE TABLE "users_skill" (
 
 CREATE TABLE "program_language" (
 	"id" serial NOT NULL,
-	"language_name" varchar(32) NOT NULL,
+	"language_name" varchar(32) UNIQUE NOT NULL,
 	CONSTRAINT program_language_pk PRIMARY KEY ("id")
 ) WITH (
   OIDS=FALSE

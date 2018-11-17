@@ -3,10 +3,6 @@ package ConfigData;
 use Exporter 'import';
 @EXPORT_OK = qw($configData $router);
 
-BEGIN {
-	unshift @INC, '/clover/citrusleaf_client_swig_2.1.34/swig/perl';
-}
-
 our $configData = {
 	#postgres
 	config_pg_user => $ENV{PG_USER},
